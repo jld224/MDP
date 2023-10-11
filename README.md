@@ -1,87 +1,64 @@
-# AI Project 2 - MDP
-# Grid world - part 1 policy evaluation; part 2 value iteration
-import pandas as pd
-import numpy as np
-import sys
+## MDP Grid World Project
 
+This AI project involves a grid world where an agent makes decisions based on two methods: policy evaluation and value iteration. The goal is to determine the best policies for actions in a grid world format.
 
-def policyEvaluation(policy, reward, gamma, duration):
-    val = np.zeros(policy.shape)
-    value_grid = np.zeros_like(val)
-    terminal_states = [(4, 3), (4, 2)]
-    iter_count = 0
+### Getting started
 
-    while iter_count < duration:
-        new_val = np.copy(value_grid)
-        for i in range(val.shape[0]):
-            for j in range(val.shape[1]):
-                if (i, j) in terminal_states:
-                    continue
-                action = policy[i, j]
-                if action == 1:  # up
-                    next_vals = []
-                    if i > 0: next_vals.append(0.8 * (reward + gamma * value_grid[i - 1, j]))
-                    if j > 0: next_vals.append(0.1 * (reward + gamma * value_grid[i, j - 1]))
-                    if j < val.shape[1] - 1: next_vals.append(0.1 * (reward + gamma * value_grid[i, j + 1]))
-                    new_val[i, j] = sum(next_vals)
-                # .. do the similar for case action -1, 2, -2 (down, right, left)
+The project was designed and tested using Python 3. It is required to run the project.
 
-        value_grid = new_val
-        iter_count += 1
+### Libraries used
 
-    return value_grid
+- Pandas
+- Numpy
+- sys
 
+### Project Files
 
-def valueIteration(reward, gamma, prob, duration):
-    value_grid = np.zeros((3, 4))
-    policy = np.zeros((3, 4))
-    terminal_states = [(4, 3), (4, 2)]
-    actions = {'up': (1, 0), 'right': (0, 1), 'down': (-1, 0), 'left': (0, -1)}
-    iter_count = 0
+- `MDPGrid.py`: This Python file contains the main program for policy evaluation and value iteration. 
 
-    while iter_count < duration:
-        new_value_grid = np.copy(value_grid)
-        for i in range(3):
-            for j in range(4):
-                if (i, j) in terminal_states:
-                    continue
-                val = []
-                for action in actions.keys():
-                    next_step = (i + actions[action][0], j + actions[action][1])
-                    if (next_step[0] in range(3)) and (next_step[1] in range(4)):
-                        val.append((reward + prob * gamma * value_grid[next_step]))
-                new_value_grid[i, j] = max(val)
-                policy[i, j] = np.argmax(val) + 1
-        value_grid = new_value_grid
-        iter_count += 1
+### Functions
 
-    return policy
+The main functionalities of the program are separated into multiple parts.
 
+- `policyEvaluation(policy, reward, gamma, duration)`: This function evaluates a given policy through time and returns the expected utility of the policy after the specified number of iterations.
+  
+- `valueIteration(reward, gamma, prob, duration)`: This function does value iteration to find the optimal policy. It returns the optimal policy.
 
-# No need to change the main function.
-def main():
-    part, reward, arg3 = sys.argv[1:]
-    gamma = 0.95
-    duration = 50
-    if part == "1":
-        policyFileName = arg3
-        policyData = pd.read_csv(policyFileName, header=None)
-        policy = policyData.to_numpy(dtype=int)
-        policy = policy[::-1]  # flip the rows to match the setup
-        values = policyEvaluation(policy, float(reward), gamma, duration)
-        print("The expected utility of policy given in " + policyFileName +
-              " after", duration, "iterations :")
-        print(values[::-1])  # flip the rows to match the setup
-    elif part == "2":
-        prob = float(arg3)
-        print("Optimal policy after", duration, "iterations :")
-        policy = valueIteration(float(reward), gamma, prob, duration)
-        print(policy[::-1])  # flip the rows to match the setup
-    else:
-        print("arg error")
+- `main()`: This is the main driver function of the code that calculates and displays the expected utility and the optimal policy.
 
-    print("\ndone!")
+### How to run the project
 
+Navigate to the directory containing the file `MDPGrid.py`. Then run:
 
-if __name__ == '__main__':
-    main()
+For policy evaluation:
+
+```
+python3 MDPGrid.py 1 [reward] [policy_file.csv]
+```
+
+For value iteration:
+
+```
+python3 MDPGrid.py 2 [reward] [probability]
+```
+
+Where:
+- `[reward]` is the reward to states, other than the two terminal states
+- `[probability]` is the transition probability to the intended direction
+- `<policy_file.csv>` is the filename of the policy expressed as a .csv file
+
+Examples:
+
+- Policy evaluation with a reward of -0.04 and using `policy.csv` file for policy:
+  
+   `python3 MDPGrid.py 1 -0.04 policy.csv`
+  
+- Value iteration with a reward of -0.05 and a transition probability of 0.7.
+  
+   `python3 MDPGrid.py 2 -0.05 0.7`
+
+Please replace `[reward]`, `[probability]`, and `<policy_file.csv>` with your actual values.
+
+### Output
+
+The results will be printed to the console. These will include the expected utility of a specified policy or the optimal policy after a specified number of iterations.
