@@ -49,9 +49,9 @@ Where:
 
 Examples:
 
-- Policy evaluation with a reward of -0.04 and using `policy.csv` file for policy:
+- Policy evaluation with a reward of -0.04 and using `case1.csv` file for policy:
   
-   `python3 MDPGrid.py 1 -0.04 policy.csv`
+   `python3 MDPGrid.py 1 -0.04 case1.csv`
   
 - Value iteration with a reward of -0.05 and a transition probability of 0.7.
   
